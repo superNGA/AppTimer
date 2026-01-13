@@ -185,11 +185,19 @@ int main(int nArgs, char** args)
 
 
     PROCESSENTRY32 proc;
-    AppTimer::GetTargetProcessID(AppTimer::g_szTargetApp, &proc);
-    AppTimer::KillProcess(proc.th32ProcessID);
-    
-    printf(GREEN "Process [ %s ] terminated after [ %d ] minutes!\n" RESET, AppTimer::g_szTargetApp, AppTimer::g_iTimer);
+    bool bTargetFound = AppTimer::GetTargetProcessID(AppTimer::g_szTargetApp, &proc);
+    if(bTargetFound == true)
+    {
+        AppTimer::KillProcess(proc.th32ProcessID);
+        printf(GREEN "Process [ %s ] terminated after [ %d ] minutes!\n" RESET, AppTimer::g_szTargetApp, AppTimer::g_iTimer);
+    }
+    else // Incase target was closed before timer ending.
+    {
+        printf(RED "Target process [ %s ] is not running.\n" RESET, AppTimer::g_szTargetApp);
+    }
 
+
+    printf("Closing...");
     return 0;
 }
 
